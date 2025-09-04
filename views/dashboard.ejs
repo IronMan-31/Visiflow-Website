@@ -1,0 +1,254 @@
+<%- include('partials/header') %>
+
+<main class="flex-1">
+    <!-- Dashboard Header -->
+    <div class="bg-dark-surface shadow-sm border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-white">
+                        Welcome back, <%= user.firstName %>!
+                    </h1>
+                    <p class="text-gray-300 mt-1">
+                        Monitor your river systems and track water quality in real-time
+                    </p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-400">Last login</p>
+                    <p class="text-sm font-medium text-gray-200">
+                        <%= new Date(user.lastLogin).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        }) %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-dark-surface rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-tint text-2xl text-blue-400"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-400">Active Sensors</p>
+                        <p class="text-2xl font-bold text-white">24</p>
+                        <p class="text-xs text-green-400">+2 this week</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-dark-surface rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-chart-line text-2xl text-green-400"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-400">Water Quality</p>
+                        <p class="text-2xl font-bold text-white">Good</p>
+                        <p class="text-xs text-green-400">pH 7.2</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-dark-surface rounded-xl shadow-lg p-6 border-l-4 border-orange-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-thermometer-half text-2xl text-orange-400"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-400">Temperature</p>
+                        <p class="text-2xl font-bold text-white">18.5°C</p>
+                        <p class="text-xs text-gray-400">±0.3°C</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-dark-surface rounded-xl shadow-lg p-6 border-l-4 border-red-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-400"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-400">Alerts</p>
+                        <p class="text-2xl font-bold text-white">2</p>
+                        <p class="text-xs text-red-400">Requires attention</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Recent Activity -->
+            <div class="lg:col-span-2">
+                <div class="bg-dark-surface rounded-xl shadow-lg p-6 border border-gray-700">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-white">Recent Monitoring Activity</h2>
+                        <button class="text-river-blue hover:text-river-light transition-colors duration-200">
+                            <i class="fas fa-external-link-alt mr-1"></i>
+                            View All
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4 p-4 bg-dark-card rounded-lg border border-gray-700">
+                            <div class="flex-shrink-0">
+                                <div class="w-10 h-10 bg-green-900/50 rounded-full flex items-center justify-center border border-green-700">
+                                    <i class="fas fa-check text-green-400"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-white">Water quality check completed</p>
+                                <p class="text-sm text-gray-400">Sensor RS-001 • 2 hours ago</p>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                <i class="fas fa-clock mr-1"></i>
+                                14:30
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4 p-4 bg-dark-card rounded-lg border border-gray-700">
+                            <div class="flex-shrink-0">
+                                <div class="w-10 h-10 bg-orange-900/50 rounded-full flex items-center justify-center border border-orange-700">
+                                    <i class="fas fa-exclamation text-orange-400"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-white">Temperature threshold exceeded</p>
+                                <p class="text-sm text-gray-400">Sensor RS-003 • 4 hours ago</p>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                <i class="fas fa-clock mr-1"></i>
+                                12:15
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4 p-4 bg-dark-card rounded-lg border border-gray-700">
+                            <div class="flex-shrink-0">
+                                <div class="w-10 h-10 bg-blue-900/50 rounded-full flex items-center justify-center border border-blue-700">
+                                    <i class="fas fa-plus text-blue-400"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-white">New sensor installed</p>
+                                <p class="text-sm text-gray-400">Location: Pine River Bridge • 1 day ago</p>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                <i class="fas fa-clock mr-1"></i>
+                                Yesterday
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions & Alerts -->
+            <div class="space-y-6">
+                <!-- Quick Actions -->
+                <div class="bg-dark-surface rounded-xl shadow-lg p-6 border border-gray-700">
+                    <h3 class="text-lg font-bold text-white mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <button class="w-full text-left p-3 bg-river-blue text-white rounded-lg hover:bg-river-dark transition-all duration-200 transform hover:scale-105">
+                            <i class="fas fa-plus mr-2"></i>
+                            Add New Sensor
+                        </button>
+                        <button class="w-full text-left p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 transform hover:scale-105">
+                            <i class="fas fa-download mr-2"></i>
+                            Export Data
+                        </button>
+                        <button class="w-full text-left p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all duration-200 transform hover:scale-105">
+                            <i class="fas fa-chart-bar mr-2"></i>
+                            Generate Report
+                        </button>
+                        <button class="w-full text-left p-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-all duration-200 transform hover:scale-105">
+                            <i class="fas fa-cog mr-2"></i>
+                            System Settings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Active Alerts -->
+                <div class="bg-dark-surface rounded-xl shadow-lg p-6 border border-gray-700">
+                    <h3 class="text-lg font-bold text-white mb-4">Active Alerts</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-red-900/30 border border-red-700 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-exclamation-triangle text-red-400 mr-2"></i>
+                                <div>
+                                    <p class="text-sm font-medium text-red-300">High Turbidity</p>
+                                    <p class="text-xs text-red-400">Sensor RS-003</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-3 bg-yellow-900/30 border border-yellow-700 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-battery-quarter text-yellow-400 mr-2"></i>
+                                <div>
+                                    <p class="text-sm font-medium text-yellow-300">Low Battery</p>
+                                    <p class="text-xs text-yellow-400">Sensor RS-007</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Profile Card -->
+                <div class="bg-dark-surface rounded-xl shadow-lg p-6 border border-gray-700">
+                    <h3 class="text-lg font-bold text-white mb-4">Profile</h3>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-river-blue rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-user text-2xl text-white"></i>
+                        </div>
+                        <p class="font-semibold text-white"><%= user.getFullName() %></p>
+                        <p class="text-sm text-gray-300"><%= user.email %></p>
+                        <p class="text-xs text-gray-400 mt-2">
+                            Member since <%= new Date(user.createdAt).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long' 
+                            }) %>
+                        </p>
+                        <button class="mt-3 text-river-blue hover:text-river-light text-sm transition-colors duration-200">
+                            <i class="fas fa-edit mr-1"></i>
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-dark-surface rounded-xl shadow-lg p-6 border border-gray-700">
+                <h3 class="text-lg font-bold text-white mb-4">Water Quality Trends</h3>
+                <div class="h-64 bg-dark-card rounded-lg flex items-center justify-center border border-gray-700">
+                    <div class="text-center text-gray-400">
+                        <i class="fas fa-chart-area text-4xl mb-2"></i>
+                        <p>Chart placeholder</p>
+                        <p class="text-sm">Real-time data visualization</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-dark-surface rounded-xl shadow-lg p-6 border border-gray-700">
+                <h3 class="text-lg font-bold text-white mb-4">Temperature Monitoring</h3>
+                <div class="h-64 bg-dark-card rounded-lg flex items-center justify-center border border-gray-700">
+                    <div class="text-center text-gray-400">
+                        <i class="fas fa-chart-line text-4xl mb-2"></i>
+                        <p>Chart placeholder</p>
+                        <p class="text-sm">24-hour temperature data</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('partials/footer') %>

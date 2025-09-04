@@ -1,17 +1,66 @@
-const express = require("express");
+const express = require('express');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const passport = require('passport');
+const flash = require('express-flash');
+const methodOverride = require('method-override');
+require('dotenv').config();
+let PORT = 3000
 const app = express();
-const PORT = 3000;
 
-// Serve static files (CSS, JS, images)
-app.use(express.static("public"));
+// Database connection
+require('./config/database');
 
-// Set EJS as template engine
-app.set("view engine", "ejs");
+// Passport configuration
+require('./config/passport')(passport);
+
+// View engine setup
+app.set('view engine', 'ejs');
+app.set('views', './views');
+
+// Static files
+app.use(express.static('public'));
+
+// Body parsing middleware
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(methodOverride('_method'));
+
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI
+  }),
+  cookie: {
+    secure: false, // Set to true in production with HTTPS
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 // 24 hours
+  }
+}));
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Flash messages
+app.use(flash());
+
+// Global variables
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  res.locals.error = req.flash('error');
+  res.locals.success = req.flash('success');
+  next();
+});
 
 // Routes
-app.get("/", (req, res) => {
-  res.render("index", { title: "Home Page" });
-});
+app.use('/', require('./routes/index'));
+app.use('/auth', require('./routes/auth'));
+
 
 app.get("/about", (req, res) => {
   res.render("about", { title: "About Us" });
