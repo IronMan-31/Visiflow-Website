@@ -4,21 +4,59 @@ let status = "online";
 let function1 = "Remote Vision System";
 let depth = "10m";
 
-const machinesData = [
-  {
-    id: 1,
-    name: "Kamand",
-    location: "Doordrishti",
-    category: "doordrishti",
-    machineType: "Doordrishti",
-    machineCode: "riverbot-001",
-    latitude: latitude,
-    longitude: longitude,
-    depth: depth,
-    status: status,
-    function: function1,
-  },
-];
+const machinesData = [];
+
+async function fillinData() {
+  let email = await fetch("/user_detail");
+  email = await email.json();
+  email = email.email;
+  let machines = await fetch("/user_machines", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: email }),
+  });
+  machines = await machines.json();
+  machines = machines.map((val) => {
+    return { code: val.machine_code, name: val.machine_name };
+  });
+  machines = await Promise.all(
+    machines.map(async (val) => {
+      const res = await fetch(
+        "https://uwyrdh2vtf.execute-api.ap-south-1.amazonaws.com/v2/device",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ device_id: val.code }),
+        }
+      );
+      let resp = await res.json();
+      resp.name = val.name;
+      resp.code = val.code;
+      if (resp.status == "active") {
+        resp.status = "online";
+      }
+      return resp;
+    })
+  );
+  for (let i = 0; i < machines.length; i += 1) {
+    const obj = {
+      id: machinesData.length + 1,
+      name: machines[i].name,
+      location: "kamand",
+      category: "Door Drishti",
+      machineType: "Door Drishti",
+      latitude: machines[i].latitude,
+      longitude: machines[i].longitude,
+      depth: depth,
+      status: machines[i].status,
+      function: "Flood detection",
+      machineCode: machines[i].code,
+    };
+    machinesData.push(obj);
+    console.log(machinesData);
+  }
+  renderMachines(machinesData);
+}
 
 let currentMachine = null;
 
@@ -97,7 +135,7 @@ function renderMachines(machines = machinesData) {
               <button class="btn btn-secondary" onclick="configure(this, ${
                 machine.id
               })">
-                Configure
+                Configs
               </button>
               <button class="btn btn-danger" onclick="deleteMachine(this, ${
                 machine.id
@@ -181,19 +219,20 @@ function openConfigModal() {
 
   document.getElementById(
     "modalTitle"
-  ).textContent = `Configure ${currentMachine.name}`;
+  ).textContent = `Configuration of ${currentMachine.name}`;
   document.getElementById(
     "modalSubtitle"
   ).textContent = `${currentMachine.location} - ${currentMachine.function}`;
 
-  document.getElementById("configName").value = currentMachine.name;
-  document.getElementById("configMachineType").value =
+  document.getElementById("configName").innerText = currentMachine.name;
+  document.getElementById("machine_type").innerText =
     currentMachine.machineType;
-  document.getElementById("configMachineCode").value =
+  document.getElementById("configMachineCode").innerText =
     currentMachine.machineCode;
-  document.getElementById("configLatitude").value = currentMachine.latitude;
-  document.getElementById("configLongitude").value = currentMachine.longitude;
-  document.getElementById("configDepth").value = currentMachine.depth;
+  document.getElementById("configLatitude").innerText = currentMachine.latitude;
+  document.getElementById("configLongitude").innerText =
+    currentMachine.longitude;
+  document.getElementById("configDepth").innerText = currentMachine.depth;
 
   document.getElementById("configModal").classList.add("show");
 }
@@ -235,11 +274,11 @@ function saveConfiguration() {
   }, 1000);
 }
 
-function deleteMachine(btn, machineId) {
+async function deleteMachine(btn, machineId) {
   const machine = machinesData.find((m) => m.id === machineId);
   if (confirm(`Are you sure you want to delete ${machine.name}?`)) {
     const card = btn.closest(".machine-card");
-    btn.innerHTML = "⚠️ DELETING...";
+    btn.innerHTML = "Removing";
     btn.style.background = "linear-gradient(135deg, #dc2626, #b91c1c)";
     btn.disabled = true;
 
@@ -253,6 +292,13 @@ function deleteMachine(btn, machineId) {
         renderMachines();
       }, 800);
     }, 1500);
+    let resp = await fetch("/user_machines", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ machine_code: machine.machineCode }),
+    });
+    resp = await resp.json();
+    console.log(resp);
   }
 }
 
@@ -305,3 +351,5 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
+window.addEventListener("DOMContentLoaded", fillinData);

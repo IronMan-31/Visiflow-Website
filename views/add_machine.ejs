@@ -912,7 +912,7 @@
           <a href="/" class="logo" style="color: white">VLSIFLOW</a>
           <nav class="nav">
             <a href="/about" class="nav-link" style="color: white">About Us</a>
-            <a href="/real_time" class="nav-link" style="color: white"
+            <a href="/dashboard" class="nav-link" style="color: white"
               >Real-Time Data
             </a>
             <a href="/addmachine" class="nav-link" style="color: white"
@@ -922,7 +922,7 @@
               >View Machines</a
             >
           </nav>
-          <button class="cta-button" >Let's Talk</button>
+          <button class="cta-button">Let's Talk</button>
         </div>
       </header>
 
@@ -1025,6 +1025,21 @@
         </section>
       </main>
     </div>
+    <script>
+      async function username() {
+        console.log("username called");
+        let username = await fetch("/user_detail");
+        username = await username.json();
+        username = username.firstName;
+        username = username.toLowerCase();
+        username = username.charAt(0).toUpperCase() + username.slice(1);
+        if (username != undefined)
+          document.querySelector(
+            ".cta-button"
+          ).textContent = `Hey! ${username}`;
+      }
+      window.addEventListener("DOMContentLoaded", username);
+    </script>
 
     <script src="addmachine.js"></script>
   </body>

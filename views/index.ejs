@@ -426,7 +426,7 @@
         <a href="/" class="logo" style="color: black">VLSIFLOW</a>
         <nav class="nav">
           <a href="/about" class="nav-link" style="color: black">About Us</a>
-          <a href="/real_time" class="nav-link" style="color: black"
+          <a href="/dashboard" class="nav-link" style="color: black"
             >Real-Time Data
           </a>
           <a href="/addmachine" class="nav-link" style="color: black"
@@ -457,7 +457,7 @@
           </p>
           <button
             class="hero-button"
-            onclick="window.location.href='/real_time'"
+            onclick="window.location.href='/dashboard'"
           >
             Visualise Data
             <svg
@@ -902,17 +902,13 @@
         <div class="footer-section">
           <h4>Quick Links</h4>
           <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="realtime.html">Real-Time Data</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/dashboard">Real-Time Data</a></li>
             <li>
-              <a href="#" onclick="alert('Login feature coming soon!')"
-                >Login</a
-              >
+              <a href="/login">Login</a>
             </li>
             <li>
-              <a href="#" onclick="alert('Sign up feature coming soon!')"
-                >Sign Up</a
-              >
+              <a href="/signup">Sign Up</a>
             </li>
           </ul>
         </div>
@@ -1084,6 +1080,19 @@
           toggleActions: "play none none reverse",
         },
       });
+      async function username() {
+        console.log("username called");
+        let username = await fetch("/user_detail");
+        username = await username.json();
+        username = username.firstName;
+        username = username.toLowerCase();
+        username = username.charAt(0).toUpperCase() + username.slice(1);
+        if (username != undefined)
+          document.querySelector(
+            ".cta-button"
+          ).textContent = `Hey! ${username}`;
+      }
+      window.addEventListener("DOMContentLoaded", username);
     </script>
   </body>
 </html>

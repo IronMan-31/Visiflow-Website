@@ -89,7 +89,7 @@ function generateMachineCode(name, type) {
   return `${typePrefix[type]}-${nameCode}-${randomNum}`;
 }
 
-function addMachine() {
+async function addMachine() {
   const addBtn = document.getElementById("addMachineBtn");
   const machineName = document.getElementById("machineName").value.trim();
   const machineCode = document.getElementById("machineCode").value.trim();
@@ -107,7 +107,35 @@ function addMachine() {
   }
 
   // Add loading state
-  console.log(machineName, machineCode, selectedMachineType);
+  let email = await fetch("/user_detail");
+  email = await email.json();
+  email = email.email;
+
+  let code_exist = await fetch(
+    "https://uwyrdh2vtf.execute-api.ap-south-1.amazonaws.com/v2/device",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ device_id: machineCode }),
+    }
+  );
+
+  code_exist = await code_exist.json();
+  const objkey = Object.keys(code_exist);
+
+  if (!objkey.includes("error")) {
+    let resp = await fetch("/machine_profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        machine_name: machineName,
+        machine_code: machineCode,
+      }),
+    });
+    resp = await resp.json();
+    console.log(resp);
+  }
 
   addBtn.classList.add("btn-loading");
   addBtn.disabled = true;
@@ -131,28 +159,45 @@ function addMachine() {
   }, 800);
 
   // Simulate API call
-  setTimeout(() => {
-    clearInterval(progressInterval);
-
-    // Success state
-    addBtn.classList.remove("btn-loading");
-    addBtn.style.background = "linear-gradient(135deg, #22c55e, #16a34a)";
-    addBtn.innerHTML = "<span>🎉 Machine Added Successfully!</span>";
-
-    // Create celebration effect
-    createCelebrationEffect();
-
+  if (!objkey.includes("error")) {
     setTimeout(() => {
-      showSuccessNotification(
-        `${machineName} (${machineCode}) has been successfully added to the system!`
-      );
+      clearInterval(progressInterval);
 
-      // Reset form after success
+      // Success state
+      addBtn.classList.remove("btn-loading");
+      addBtn.style.background = "linear-gradient(135deg, #22c55e, #16a34a)";
+      addBtn.innerHTML = "<span>Machine Added Successfully!</span>";
+
       setTimeout(() => {
-        resetForm();
-      }, 3000);
-    }, 1000);
-  }, 3500);
+        showSuccessNotification(
+          `${machineName} (${machineCode}) has been successfully added to the system!`
+        );
+        setTimeout(() => {
+          resetForm();
+        }, 3000);
+      }, 1000);
+    }, 3500);
+  } else {
+    setTimeout(() => {
+      clearInterval(progressInterval);
+
+      // Success state
+      addBtn.classList.remove("btn-loading");
+      addBtn.style.color = "white";
+      addBtn.style.background = "red";
+      addBtn.innerHTML = "<span>Machine Addition failed</span>";
+
+      setTimeout(() => {
+        showFailureNotification(
+          `${machineName} (${machineCode}) is not alloted to you yet.`
+        );
+
+        setTimeout(() => {
+          resetForm();
+        }, 3000);
+      }, 1000);
+    }, 3500);
+  }
 }
 
 function createCelebrationEffect() {
@@ -197,7 +242,23 @@ function showSuccessNotification(message) {
   const notification = document.createElement("div");
   notification.className = "success-message";
   notification.innerHTML = `
-                <span>✅</span>
+                <span>${message}</span>
+            `;
+
+  document.body.appendChild(notification);
+
+  // Auto remove after 5 seconds
+  setTimeout(() => {
+    notification.style.animation = "slideOutToRight 0.6s ease-in forwards";
+    setTimeout(() => notification.remove(), 600);
+  }, 5000);
+}
+
+function showFailureNotification(message) {
+  const notification = document.createElement("div");
+  notification.className = "success-message";
+  notification.style.background = "red";
+  notification.innerHTML = `
                 <span>${message}</span>
             `;
 
